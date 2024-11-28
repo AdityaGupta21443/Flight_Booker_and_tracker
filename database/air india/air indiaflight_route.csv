@@ -1,0 +1,44 @@
+flightid,flightcode,departureairport,destinationairport,flightdistance,currentstatus,averagedelay
+1,AI100,Delhi,New York City,11760.0,In Air,10.0
+2,AI100,Delhi,New York City,11760.0,Not Departed,0.0
+3,AI101,Mumbai,London,7200.0,Arrived,15.0
+4,AI102,Bengaluru,Dubai,2700.0,In Air,5.0
+5,AI102,Bengaluru,Dubai,2700.0,Not Departed,0.0
+6,AI200,Delhi,Mumbai,1150.0,Arrived,5.0
+7,AI200,Delhi,Mumbai,1150.0,Not Departed,0.0
+8,AI201,Bengaluru,Hyderabad,500.0,In Air,8.0
+9,AI202,Kolkata,Delhi,1440.0,Arrived,2.0
+10,AI203,Delhi,Bengaluru,1740.0,In Air,12.0
+11,AI204,Mumbai,Bengaluru,850.0,Arrived,7.0
+12,AI205,Hyderabad,Delhi,1250.0,Not Departed,0.0
+13,AI300,Delhi,Mumbai,1150.0,In Air,9.0
+14,AI300,Delhi,Mumbai,1150.0,Arrived,3.0
+15,AI301,Delhi,Singapore,4150.0,Not Departed,0.0
+16,AI302,Bengaluru,Goa,620.0,Arrived,6.0
+17,AI303,Bengaluru,Hyderabad,500.0,In Air,10.0
+18,AI304,Delhi,London,7200.0,Not Departed,0.0
+19,AI305,Mumbai,Dubai,2300.0,Arrived,8.0
+20,AI306,Kolkata,Mumbai,1675.0,Not Departed,0.0
+21,AI307,Bengaluru,Hyderabad,500.0,In Air,4.0
+22,AI308,Delhi,Singapore,4150.0,Not Departed,0.0
+23,AI309,Delhi,Dubai,2700.0,In Air,6.0
+24,AI310,Delhi,Singapore,4150.0,Arrived,10.0
+25,AI311,Mumbai,Delhi,1150.0,Arrived,2.0
+26,AI312,Bengaluru,Kolkata,1560.0,In Air,12.0
+27,AI313,Mumbai,New York City,12500.0,Arrived,20.0
+28,AI314,Delhi,Dubai,2700.0,Not Departed,0.0
+29,AI315,Bengaluru,Mumbai,850.0,In Air,3.0
+30,AI316,Delhi,London,7200.0,Arrived,14.0
+31,AI317,Mumbai,Singapore,4150.0,Not Departed,0.0
+32,AI318,Bengaluru,London,8380.0,Arrived,10.0
+33,AI319,Mumbai,Dubai,2300.0,In Air,7.0
+34,AI320,Mumbai,Hyderabad,710.0,Not Departed,0.0
+35,AI321,Delhi,Kolkata,1440.0,Arrived,2.0
+36,AI322,Mumbai,Bengaluru,850.0,In Air,6.0
+37,AI323,Delhi,Hyderabad,1250.0,Arrived,5.0
+38,AI324,Bengaluru,Goa,620.0,Not Departed,0.0
+39,AI325,Mumbai,London,7200.0,In Air,12.0
+40,AI326,Delhi,Singapore,4150.0,Not Departed,0.0
+41,AI327,Bengaluru,Hyderabad,500.0,In Air,8.0
+42,AI328,Delhi,Mumbai,1150.0,Arrived,3.0
+43,AI329,Mumbai,New York City,12500.0,In Air,15.0

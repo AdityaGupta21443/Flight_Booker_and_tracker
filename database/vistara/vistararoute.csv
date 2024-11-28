@@ -1,0 +1,19 @@
+flightid,origin,destination,distancetraveled,estimateddelay
+1,Mumbai,Delhi,1150,10
+2,Delhi,Bangalore,1740,0
+3,Mumbai,Chennai,1330,5
+4,Delhi,Kolkata,1300,20
+6,Hyderabad,Pune,500,0
+7,Chennai,Ahmedabad,1500,0
+10,Mumbai,Hyderabad,700,15
+11,Kolkata,Delhi,1310,0
+12,Delhi,Mumbai,1150,5
+13,Delhi,London,6700,0
+15,Mumbai,Dubai,1920,0
+16,Delhi,New York,11700,30
+17,Mumbai,Singapore,3900,20
+18,Delhi,Paris,7600,45
+14,Bangalore,Frankfurt,7600,15
+5,Pune,Chennai,910,0
+8,Mumbai,Goa,580,0
+9,Hyderabad,Mumbai,700,5

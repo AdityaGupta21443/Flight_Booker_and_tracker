@@ -1,0 +1,47 @@
+flightid,fromlocation,tolocation,distancekm,avgdelay
+1,Delhi,Mumbai,1400,15
+2,Mumbai,Bangalore,840,10
+3,Bangalore,Hyderabad,560,5
+4,Hyderabad,Chennai,600,12
+5,Chennai,Kolkata,1650,20
+6,Delhi,London,6700,60
+7,Mumbai,Dubai,2000,30
+8,Bangalore,Singapore,3500,45
+9,Delhi,New York,12000,120
+10,Mumbai,Tokyo,5800,90
+11,Hyderabad,Kolkata,1500,20
+12,Bangalore,Delhi,2000,25
+13,Delhi,Dubai,2400,35
+14,Chennai,Bangkok,2900,40
+15,Bangalore,Ahmedabad,850,10
+16,Kolkata,Pune,1600,25
+1001,Delhi,Goa,1250,15
+1002,Mumbai,Chennai,1000,10
+1003,Bangalore,Hyderabad,560,5
+1004,Kolkata,Delhi,1500,20
+1005,Hyderabad,Pune,670,12
+1006,Chennai,Kochi,700,10
+1007,Delhi,Bangalore,2000,25
+1008,Mumbai,Jaipur,280,5
+1009,Kolkata,Varanasi,680,15
+1010,Bangalore,Indore,850,12
+1011,Delhi,Hong Kong,3000,50
+1012,Mumbai,Singapore,5000,70
+1013,Bangalore,Dubai,2000,40
+1014,Chennai,Bangkok,2900,50
+1015,Hyderabad,Maldives,3100,65
+1016,Pune,Abu Dhabi,3300,70
+1017,Kolkata,Sydney,9000,120
+1018,Delhi,San Francisco,13000,180
+1019,Mumbai,Berlin,7400,90
+1020,Chennai,Singapore,3300,50
+1021,Delhi,Istanbul,4900,80
+1022,Bangalore,Kuala Lumpur,3800,55
+1023,Hyderabad,Los Angeles,15000,200
+1024,Pune,Dubai,2000,25
+1025,Delhi,Shanghai,5500,75
+1026,Mumbai,Bangkok,3300,60
+1027,Chennai,London,6700,100
+1028,Kolkata,New York,12000,150
+1029,Bangalore,Sydney,7800,120
+1030,Hyderabad,Toronto,13000,170
