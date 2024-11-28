@@ -151,18 +151,21 @@ schema_mapping = {
 fkey_mapping={"air india":{"flight":"flightid","customer":""},"indigo":{"customer":"emailid","flight":"flightid"},"vistara":{"customer":"","flight":"flightid"}}
 dbnames=['air india','indigo','vistara']
 flight_codes={"AI":'air india',"VS":'vistara',"IG":"indigo"}
-airline_to_loyalty={'AI':6,"IN":7,"VIS":8}
+airline_to_loyalty={"AI":6,"IN":7,"VIS":8}
 airline_to_email={'AI':3,"IN":4,"VIS":5}
 
 def get_email(row,airline):
-    if row[airline_to_email[airline]]:
-        return row[airline_to_email[airline]]
+    if row[0][airline_to_email[airline]]:
+        
+        return row[0][airline_to_email[airline]]
     else:
         return 0
 
 def get_loyalty(row,airline):
-    if row[airline_to_loyalty[airline]]:
-        return row[airline_to_loyalty[airline]]
+    
+
+    if row[0][airline_to_loyalty[airline]]:
+        return row[0][airline_to_loyalty[airline]]
     else:
         return 0
 
@@ -290,7 +293,7 @@ def decompose_query(local_queries):
                     update_list=[]
                     where_list=[]
                     final_query=f"UPDATE {tot_tables[0]} SET "
-                    for entity,op in local_query.items():
+                    for entity,op in local_query[0].items():
                         if op[:3]=='-' or op[:3]=='+':
                             update_list=[entity,op]
                         else:
@@ -323,18 +326,34 @@ def decompose_query(local_queries):
     return sql_queries
 
 def data_wrapper(sql_queries, db_connections):
-    results = {}
+    local_results = {}
+    fields = {}
 
     for db, queries in sql_queries.items():
-        results[db] = []
+        local_results[db] = []
         conn = db_connections[db]
         cursor = conn.cursor()
         for query in queries:
             cursor.execute(query)
             if query.strip().upper().startswith("SELECT"):
-                results[db].append(cursor.fetchall())
+                local_results[db].append(cursor.fetchall())
+                fields[db] = [desc[0] for desc in cursor.description]
             conn.commit()
-    return results
+    global_result = []
+    for db, rows in local_results.items():
+        mapping = schema_mapping['global_to_local'][db]['flight']
+        db_schema = fields[db]
+        print(db_schema)
+        for row in rows:
+            print(row)
+            global_row = {}
+            for global_field, local_field in mapping.items():
+                if local_field in db_schema:
+                    global_row[global_field] = row[db_schema.index(local_field)]
+                else:
+                    global_row[global_field] = None
+            global_result.append(global_row)
+    return pd.DataFrame(global_result)
 
 def process_query(query, db_connections):
     db_connections = setup_db_connections()
@@ -435,7 +454,7 @@ def main_menu():
                     print("No loyalty points used")
 
                 query["flight"] = {
-                    f"{seat_class.title()}_Seats": " - " + seat_count,
+                    f"{seat_class.title()}_Seats": " - " + str(seat_count),
                     "Flight code": " = " + f"'{flight_code}'",
                     "Departure_Time": f"between '{str(datetime.strptime(time, '%Y-%m-%d'))}' and '{str(datetime.strptime(time, '%Y-%m-%d').replace(hour=23, minute=59, second=59))}'"
 
