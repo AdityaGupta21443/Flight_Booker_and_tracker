@@ -1,8 +1,9 @@
 from datetime import datetime
 import psycopg2
+import pandas as pd
 
 attr_to_table={'air india': {'CustomerID': 'customer_info',
-  'FullName': 'customer_info',
+ 'FullName': 'customer_info',
   'EmailAddress': 'customer_info',
   'ContactNumber': 'customer_info',
   'LoyaltyPoints': 'customer_info',
@@ -10,7 +11,7 @@ attr_to_table={'air india': {'CustomerID': 'customer_info',
   'cityofresidence': 'customer_info',
   'address': 'customer_info',
   'flightid': 'flight_route',
-  'flightcode': 'flight_route',
+  'flightcode': 'flight_info',
   'aircraftmodel': 'flight_info',
   'ticketprice_economy': 'flight_info',
   'ticketprice_business': 'flight_info',
@@ -220,7 +221,9 @@ def analyze_query(global_query):
     local_queries = {"air india": {"customer" : {"SELECT": [], "UPDATE": []}, "flight": {"SELECT": [], "UPDATE": []}},
                      "indigo": {"customer" : {"SELECT": [], "UPDATE": []}, "flight": {"SELECT": [], "UPDATE": []}},
                      "vistara": {"customer" : {"SELECT": [], "UPDATE": []}, "flight": {"SELECT": [], "UPDATE": []}}}
+    # print(global_query)
     for db, mappings in schema_mapping["global_to_local"].items():
+        # print(global_query)
         if global_query["airline"]!="" and global_query["airline"]!=db:
             local_customer_query={}
             break
@@ -241,6 +244,7 @@ def analyze_query(global_query):
         if global_query.get("flight"):
             local_flight_query = {}
             # del global_query["customer"]
+            # print(global_query['flight'])
             for global_field, value in global_query["flight"].items():
                 if global_field in mappings["flight"]:
                     local_flight_query[mappings["flight"][global_field]] = value
@@ -251,6 +255,7 @@ def analyze_query(global_query):
                 if global_query.get("operation") == "SELECT":
                     local_queries[db]["flight"]["SELECT"].append(local_flight_query)
                 elif global_query.get("operation") == "UPDATE":
+                    # print(local_flight_query)
                     local_queries[db]["flight"]["UPDATE"].append(local_flight_query)
     print(local_queries)
     print("YPOOOO")
@@ -274,36 +279,38 @@ def decompose_query(local_queries):
                     tot_tables.add(attr_to_table[db][key])
                 tot_tables=list(tot_tables)
                 if operation=='SELECT':
-                    from_query= f"FROM {tot_tables[0]} "
+                    from_query= f"FROM \"{tot_tables[0]}\" "
                     for j in range(1,len(tot_tables)):
-                        from_query+= f"JOIN {tot_tables[j]} on {tot_tables[j-1]}.{fkey_mapping[db][table]} = {tot_tables[j]}.{fkey_mapping[db][table]} "
+                        from_query+= f"JOIN \"{tot_tables[j]}\" on \"{tot_tables[j-1]}\".\"{fkey_mapping[db][table]}\"= \"{tot_tables[j]}\".\"{fkey_mapping[db][table]}\" "
                     
                     
                     where_list=list(local_query[0].items())
-                    where_query=f"WHERE {where_list[0][0]} {where_list[0][1]} "
+                    where_query=f"WHERE \"{where_list[0][0]}\" {where_list[0][1]} "
                     for j in range(1,len(where_list)):
 
-                        where_query+=f"AND {where_list[j][0]} {where_list[j][1]} "
+                        where_query+=f"AND \"{where_list[j][0]}\" {where_list[j][1]} "
 
-                    final_query="SELECT * "+ from_query +where_query +" ;"
+                    final_query="SELECT * "+ from_query + where_query +" ;"
                     print(final_query)
                     sql_queries[db].append(final_query)
 
                 elif operation=='UPDATE':
                     update_list=[]
                     where_list=[]
-                    final_query=f"UPDATE {tot_tables[0]} SET "
+                    final_query=f"UPDATE \"{tot_tables[0]}\" SET "
                     for entity,op in local_query[0].items():
-                        if op[:3]=='-' or op[:3]=='+':
+                        if '-'in op[:2] or '+' in op[:2]:
                             update_list=[entity,op]
                         else:
                             where_list.append((entity,op))
+
+                    print(update_list,where_list)
                     
-                    final_query+=f"{entity} = {entity}"+op
+                    final_query+=f"\"{update_list[0]}\" = \"{update_list[0]}\""+ update_list[1]
                     
-                    where_query=f" WHERE {where_list[0][0]} {where_list[0][1]} "
+                    where_query=f" WHERE \"{where_list[0][0]}\" {where_list[0][1]} "
                     for j in range(1,len(where_list)):
-                        where_query+=f"AND {where_list[j][0]} {where_list[j][1]} "
+                        where_query+=f"AND \"{where_list[j][0]}\" {where_list[j][1]} "
 
                     
                     final_query+=where_query+" ;"
@@ -338,13 +345,27 @@ def data_wrapper(sql_queries, db_connections):
             if query.strip().upper().startswith("SELECT"):
                 local_results[db].append(cursor.fetchall())
                 fields[db] = [desc[0] for desc in cursor.description]
-            conn.commit()
+                for i, ele, in enumerate(fields):
+                    try:
+                        fields[db].remove()
+                        fields[db].pop(fields[db].index(ele,i+1))
+                    except:
+                        pass
+            # print(cursor.fetchone()[0])
+            print(conn.commit())
+            print(cursor.fetchone())
     global_result = []
+    
     for db, rows in local_results.items():
+        if not rows:
+            continue
+        print(rows)
         mapping = schema_mapping['global_to_local'][db]['flight']
         db_schema = fields[db]
         print(db_schema)
         for row in rows:
+            if not row:
+                continue
             print(row)
             global_row = {}
             for global_field, local_field in mapping.items():
@@ -357,6 +378,7 @@ def data_wrapper(sql_queries, db_connections):
 
 def process_query(query, db_connections):
     db_connections = setup_db_connections()
+    print(query)
     try:
         local_queries = analyze_query(query)
         sql_queries = decompose_query(local_queries)
@@ -388,7 +410,8 @@ def main_menu():
         if not logged_in_user:
             if choice == "1":
                 # # Customer Login
-                email = input("Enter your email: ")
+                # email = input("Enter your email: ")
+                email="natarajanavi@example.net"
               
 
                 result=login(email)
@@ -408,12 +431,12 @@ def main_menu():
                 # View Customer Info
                 query["customer"]["Email"] = logged_in_user
                 result = process_query(query, db_connections)
-                print(result["result"])
+                print(result)
             elif choice == "3":
                 # View Flight Booking History
                 query["customer"]["Email"] = logged_in_user
                 result = process_query(query, db_connections)
-                print(result["result"])
+                print(result)
             elif choice == "4":
                 # Search Flights
                 query["operation"]='SELECT'
@@ -448,28 +471,29 @@ def main_menu():
                 using=int(input("How many points would you like to use:"))
                 if(using<loyalty_pts and using>0):
                     
-                    query['customer']['Email']= " = " +f"{get_email(logged_in_user,flight_code[:2])}"
+                    query['customer']['Email']= " = " +f"'{get_email(logged_in_user,flight_code[:2])}'"
                     query['customer']['Points']= " - " + str(using)
                 else:
                     print("No loyalty points used")
 
                 query["flight"] = {
-                    f"{seat_class.title()}_Seats": " - " + str(seat_count),
+                    f"{seat_class.title()} Seats": " - " + str(seat_count),
                     "Flight code": " = " + f"'{flight_code}'",
-                    "Departure_Time": f"between '{str(datetime.strptime(time, '%Y-%m-%d'))}' and '{str(datetime.strptime(time, '%Y-%m-%d').replace(hour=23, minute=59, second=59))}'"
+                    "Departure_Time": f" between '{str(datetime.strptime(time, '%Y-%m-%d'))}' and '{str(datetime.strptime(time, '%Y-%m-%d').replace(hour=23, minute=59, second=59))}'"
 
                 }
                 result = process_query(query, db_connections)
                 # query = {"operation": "SELECT", "customer": {}, "flight": {},"airline":{}}
                 # query['customer']
-                print(result["result"])
+                print(result)
             elif choice == "6":
                 # Check Flight Status
                 flight_code = input("Enter flight code: ")
                 query["flight"] = {
                     "Flight code": " = " + f"'{flight_code}'",
-                    "Departure_Time": ' <= ' + str(datetime.today()).split('.')[0]
+                    "Departure_Time": ' <= ' + f"'{str(datetime.today()).split('.')[0]}'"
                 }
+                query['airline']=flight_codes[flight_code[:2]]
                 result = process_query(query, db_connections)
                 print(result)
             elif choice == "7":
