@@ -152,7 +152,7 @@ schema_mapping = {
                 'City': 'city'
             },
             "flight": {
-                'Flight code': 'flightid',
+                'Flight code': 'flightnumber',
                 'Status': 'flightstatus',
                 'Departure_Time': 'takeofftime',
                 'Landing_Time': 'landtime',
@@ -217,9 +217,9 @@ def setup_db_connections():
             "air india": psycopg2.connect(
                 dbname="air india", user="postgres", password="addy", host="localhost", port="5432"),
             "indigo": psycopg2.connect(
-                dbname="indigo", user="postgres", password="addy", host="localhost", port="5432"),
+                dbname="indigo", user="postgres", password="vinit1june", host="192.168.49.238", port="5432"),
             "vistara": psycopg2.connect(
-                dbname="vistara", user="postgres", password="addy", host="localhost", port="5432")
+                dbname="vistara", user="postgres", password="mukul123", host="192.168.49.6", port="5432")
             }
         print("All database connections established successfully.")
         return db_connections
@@ -315,7 +315,7 @@ def data_wrapper(sql_queries, db_connections):
                 
                 cursor.execute(query)
                 if query.strip().upper().startswith("SELECT"):
-                    local_results[db].extend(cursor.fetchall())
+                    local_results[db].extend(list(map(list, cursor.fetchall())))
                     fields[db] = [desc[0] for desc in cursor.description]
                     for i, ele, in enumerate(fields[db]):
                         try:
@@ -385,6 +385,7 @@ def main_menu():
             print("6. Check Flight Status")
             print("7. Logout")
             print("8. Exit")
+            print("9. test connection")
         choice = input("Enter your choice: ")
         query = {"operation": "SELECT", "customer": {}, "flight": {},"airline":""}
         if not logged_in_user:
@@ -470,6 +471,9 @@ def main_menu():
             elif choice == "7":
                 print(f"Goodbye, {logged_in_user[0][0]}!")
                 logged_in_user = None
+            elif choice =="9":
+                setup_db_connections()
+
             elif choice in ("q", "quit", "exit", "8"):
                 print("Exiting program.")
                 break
